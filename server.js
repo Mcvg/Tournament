@@ -1,17 +1,12 @@
-// server.js
 const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
-const tournamentRoutes = require('./routes/tournamentRoutes');
-
+const bodyParser = require('body-parser');
+const paymentRoutes = require('./routes/tournamentRoutes');
 
 const app = express();
+app.use(bodyParser.json());
+app.use('/v1/operations/enterteinment/management/videogames/games-tournament', paymentRoutes);
 
-mongoose.connect('mongodb://<your-mongodb-url>', { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB Connected...'))
-    .catch(err => console.log(err));
+const port = 8080;
+app.listen(port, () => console.log(`App listening on port ${port}!`));
 
-app.use('/tournament', tournamentRoutes);
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}...`));
+module.exports = app;

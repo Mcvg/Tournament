@@ -1,26 +1,10 @@
-// routes/tournamentRoutes.js
 const express = require('express');
-const Tournament = require('../models/Tournament');
-const validateToken = require('../middleware/validateToken');
-
 const router = express.Router();
+const tournamentValidations = require('../validations/tournamentValidations');
+const tournamentController = require('../controllers/tournamentController');
 
-router.post('/', validateToken, (req, res) => {
-    const tournament = new Tournament({
-        name: req.body.name,
-        date: req.body.date,
-        participants: req.body.participants
-    });
-
-    tournament.save()
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the Tournament."
-            });
-        });
-});
+router.post('/create-payment', tournamentValidations.validateTournament, tournamentValidations.validatePayment, tournamentController.createPayment);
+router.post('/create-free', tournamentValidations.validateTournament, tournamentController.createFreeTournament);
+router.get('/retrieve/:tournamentid', tournamentValidations.validateTournamentId, tournamentController.retrieveTournament);
 
 module.exports = router;

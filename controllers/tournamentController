@@ -1,0 +1,82 @@
+const moment = require('moment');
+const dynamodb = require('../db');
+
+
+exports.createPayment = (req, res) => {
+  const { type, category, date, hour, currency, price, responsible } = req.body;
+  const commission = 10; 
+  let ticketPrice = price * 1.10;
+
+  const params = {
+    TableName: 'Tournaments', // Actualiza con el nombre de tu tabla
+    Item: {
+      type,
+      category,
+      date,
+      hour,
+      currency,
+      price,
+      responsible,
+      commission,
+      ticketPrice
+    }
+  };
+
+  dynamodb.put(params, (err, data) => {
+    if (err) {
+      console.error("Error al guardar en DynamoDB", err);
+      res.status(500).json({ message: 'Error interno del servidor.' });
+    } else {
+      res.status(200).json({ message: 'Torneo creado satisfactoriamente.' });
+    }
+  });
+};
+
+exports.retrieveTournament = (req, res) => {
+    const tournamentId = Number(req.params.tournamentid);
+  
+    const params = {
+      TableName: 'Tournaments', // Actualiza con el nombre de tu tabla
+      Key: {
+        id: tournamentId
+      }
+    };
+  
+    dynamodb.get(params, (err, data) => {
+      if (err) {
+        console.error("Error al obtener de DynamoDB", err);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+      } else {
+        if (!data.Item) {
+          res.status(404).json({ message: 'El torneo no existe.' });
+        } else {
+          res.status(200).json(data.Item);
+        }
+      }
+    });
+  };
+
+  exports.createFreeTournament = (req, res) => {
+    const { type, category, date, hour, responsible } = req.body;
+  
+    const params = {
+      TableName: 'Tournaments', // Actualiza con el nombre de tu tabla
+      Item: {
+        type,
+        category,
+        date,
+        hour,
+        responsible
+      }
+    };
+  
+    dynamodb.put(params, (err, data) => {
+      if (err) {
+        console.error("Error al guardar en DynamoDB", err);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+      } else {
+        res.status(200).json({ message: 'Torneo creado satisfactoriamente.' });
+      }
+    });
+  };
+  
