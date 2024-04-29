@@ -27,7 +27,7 @@ exports.createPayment = (req, res) => {
       console.error("Error al guardar en DynamoDB", err);
       res.status(500).json({ message: 'Error interno del servidor.' });
     } else {
-      res.status(200).json({ message: 'Torneo creado satisfactoriamente.' });
+      res.status(201).json({ message: 'Torneo creado satisfactoriamente.' });
     }
   });
 };
@@ -50,7 +50,29 @@ exports.retrieveTournament = (req, res) => {
         if (!data.Item) {
           res.status(404).json({ message: 'El torneo no existe.' });
         } else {
-          res.status(200).json(data.Item);
+          let response = {}; 
+          response.type = {};
+          response.type.id = data.Item.type.id;          
+          response.type.name = data.Item.type.name;
+          response.category = {};
+          response.category.id = data.Item.category.id;          
+          response.category.name = data.Item.category.name;
+          response.date = data.Item.date;
+          response.hour = data.Item.hour; 
+          response.salesStage = data.Item.salesStage;
+          response.currency = data.Item.currency;
+          response.price = data.Item.price;
+          response.commission = data.Item.commission;
+          response.ticketPrice= data.Item.ticketPrice;
+          response.platform = data.Item.platform;
+          response.link = data.Item.link;
+          response.qrFile = data.Item.qrFile;
+          response.responsible = {};
+          response.responsible.id = data.Item.responsible.id;          
+          response.responsible.name = data.Item.responsible.name;
+          response.limitParticipants = data.Item.limitParticipants;
+
+          res.status(200).json(response);
         }
       }
     });
